@@ -1,15 +1,15 @@
-# Quantum Recurrent Neural Networks
-
-The project is driven by the absence of any viable recurrent quantum network. Although Variational Quantum Eigensolvers (VQEs) exist, the resultant Quantum Circuits are very dense, compressing a lot of parameters into a relatively compact circuit [[1]](#references). The high density of entangling gates, lack of correlation between parameters results in highly over-parameterized models which are hard to train on classification tasks on inputs larger than a few bits.
+# Recurrent Quantum Neural Networks
 
 ## Introduction
+The project is driven by the absence of any viable recurrent quantum network. Although Variational Quantum Eigensolvers (VQEs) exist, the resultant Quantum Circuits are very dense, compressing a lot of parameters into a relatively compact circuit [[1]](#quantum-neuron-an-elementary-building-block-for-machine-learning-on-quantum-computers). The high density of entangling gates, lack of correlation between parameters results in highly over-parameterized models which are hard to train on classification tasks on inputs larger than a few bits.
+
 This project focusses on constructing a QRNN, and compare it's performance on non-trivial tasks such as sequence learning and integer digit classification.
 
 The reference paper exploits the nature of quantum mechanics. The interatcions of any quantum system can be described by a Hermitian Operator $\bold{\mathcal{H}}$ which generates the system's time evolution under the unitary map:
 $$U(t) = \exp(-itH)$$
 which is a solution to the Schrodinger equation.
 
-Further, any quantum circuit compresing a sequence of individual unitary quantum gates of the form $U_i(t_i)$ for a set of parameters $t_i$ is intrinsically unitary and inherently linear [[1]](#references). This is promising because then a parameterized quantum circuit serves as a prime candidate for a unitary recurrent network.
+Further, any quantum circuit compresing a sequence of individual unitary quantum gates of the form $U_i(t_i)$ for a set of parameters $t_i$ is intrinsically unitary and inherently linear [[1]](#recurrent-quantum-neural-networks-1). This is promising because then a parameterized quantum circuit serves as a prime candidate for a unitary recurrent network.
 
 ## QNLP
 We start with experiments on Quantum Natural Language Processing. This represents a fascination convergence between quantum computing and computational linguistics, aimed at enhancing natural language processing (NLP) tasks. We start off with a simple integration of lambeq and Pennylane libraries.
@@ -19,7 +19,7 @@ Further, we explore Procedural Generation, a field focusing on algorithmically g
 Remember that we still have not employed any recursive structure in our experiments. Next we try to implement a QRNN for similar tasks.
 
 ## QRNN Cell and Network
-The fundamental building block is an improved type of quantum neuron based to introduce non-linearity [[2]](#references). In addition, we employ a type of fixed-point amplitude amplification (done during training) which alows the introduction of measurements. These both operations remains arbitrarily close to unitary. This implementation is the first quantum machine learning model capable of working with non-superposed training data.
+The fundamental building block is an improved type of quantum neuron based to introduce non-linearity [[2]](#recurrent-quantum-neural-networks-1). In addition, we employ a type of fixed-point amplitude amplification (done during training) which alows the introduction of measurements. These both operations remains arbitrarily close to unitary. This implementation is the first quantum machine learning model capable of working with non-superposed training data.
 
 There are three parts of the QRNN cell.
 - The input stage, where at each step, it writes the current input into the cell state
@@ -61,14 +61,6 @@ With regards to Quantum RNN:
 4. Run experiments for sequence memorization
 5. Run experiments for complex MNIST classification
 
-# References
-1. [Recurrent Quantum Neural Networks](./references/2006.14619.pdf), Bausch J.
-2. [Quantum Neuron: an elementary building block for machine learning on quantum computers](./references/1711.11240.pdf), Cao Y. et al.
-
-# A bit about the repo and its contents
-- assets: contains infographics, plots, visualizations
-- data: contains all the data used in training/testing
-- src: contains the actual source code; there are three subfolders
-  - models: contains saved models from different runs
-  - tests: contains some test files, may or may not be empty
-  - utils: contains some recurring code, mostly dealing with data loading
+## References
+##### [Recurrent Quantum Neural Networks](./references/2006.14619.pdf), Bausch J.
+##### [Quantum Neuron: an elementary building block for machine learning on quantum computers](./references/1711.11240.pdf), Cao Y. et,al
