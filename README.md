@@ -30,9 +30,9 @@ Although the resulting circuits are deeper than VQEs, it only requires as many q
 
 The figures below show the QRNN Cell, and how it can be used to construct a QRNN.
 
-![QRNN Cell](https://github.com/andysama79/quantum-recurrent-neural-network/blob/7031d155d3c2502b952fbd35a3f473122b207b85/assets/QRNN_Cell.png)
+![QRNN Cell](https://github.com/andysama79/quantum-recurrent-neural-network/blob/master/assets/QRNN_Cell.png?raw=true)
 $$\textit{QRNN Cell}$$
-![QRNN](https://github.com/andysama79/quantum-recurrent-neural-network/blob/7031d155d3c2502b952fbd35a3f473122b207b85/assets/QRNN.png)
+![QRNN](https://github.com/andysama79/quantum-recurrent-neural-network/blob/master/assets/QRNN.png?raw=true)
 $$\textit{QRNN}$$
 
 ## Implementation
