@@ -5,7 +5,7 @@ The project is driven by the absence of any viable recurrent quantum network. Al
 ## Introduction
 This project focusses on constructing a QRNN, and compare it's performance on non-trivial tasks such as sequence learning and integer digit classification.
 
-The reference paper exploits the nature of quantum mechanics. The interatcions of any quantum system can be described by a Hermitian Operator $\bold{\mathcal{H}}$ which generates the system's time evolution under the unitary map:
+The reference paper exploits the nature of quantum mechanics. The interatcions of any quantum system can be described by a Hermitian Operator $\textbf{\mathcal{H}}$ which generates the system's time evolution under the unitary map:
 $$U(t) = \exp(-itH)$$
 which is a solution to the Schrodinger equation.
 
@@ -30,9 +30,9 @@ Although the resulting circuits are deeper than VQEs, it only requires as many q
 
 The figures below show the QRNN Cell, and how it can be used to construct a QRNN.
 
-![QRNN Cell](./assets/QRNN_Cell.png)
+![QRNN Cell](https://raw.githubusercontent.com/andysama79/quantum-recurrent-neural-network/master/assets/QRNN_Cell.png)
 $$\textit{QRNN Cell}$$
-![QRNN](./assets/QRNN.png)
+![QRNN](https://raw.githubusercontent.com/andysama79/quantum-recurrent-neural-network/master/assets/QRNN.png)
 $$\textit{QRNN}$$
 
 ## Implementation
