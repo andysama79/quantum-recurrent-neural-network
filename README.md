@@ -1,79 +1,93 @@
-# Quantum Recurrent Neural Networks
+# QRNN Pytorch Implementation
 
-The project is driven by the absence of any viable recurrent quantum network. Although Variational Quantum Eigensolvers (VQEs) exist, the resultant Quantum Circuits are very dense, compressing a lot of parameters into a relatively compact circuit [[1]](#references). The high density of entangling gates, lack of correlation between parameters results in highly over-parameterized models which are hard to train on classification tasks on inputs larger than a few bits.
+## Setup
 
-## Introduction
-This project focusses on constructing a QRNN, and compare it's performance on non-trivial tasks such as sequence learning and integer digit classification.
+The code requires only a rudimentary pytorch/tensorboard installation; training is (so far) only done on the CPU, so no CUDA setup is required.
+For instance, the following command installs the basic necessities.
 
-The reference paper exploits the nature of quantum mechanics. The interatcions of any quantum system can be described by a Hermitian Operator $\mathcal{H}$ which generates the system's time evolution under the unitary map:
-$$U(t) = \exp(-itH)$$
-which is a solution to the Schrodinger equation.
+    pip install torch tensorboard
 
-Further, any quantum circuit compresing a sequence of individual unitary quantum gates of the form $U_i(t_i)$ for a set of parameters $t_i$ is intrinsically unitary and inherently linear [[1]](#references). This is promising because then a parameterized quantum circuit serves as a prime candidate for a unitary recurrent network.
+Further packages required
 
-## QNLP
-We start with experiments on Quantum Natural Language Processing. This represents a fascination convergence between quantum computing and computational linguistics, aimed at enhancing natural language processing (NLP) tasks. We start off with a simple integration of lambeq and Pennylane libraries.
+    pip install colorful pandas
 
-Further, we explore Procedural Generation, a field focusing on algorithmically generating content using computers. We also touch upon Natural Language Generation (NLG), which merges procedural generaltion and natural language processing. This is build upon previous work in quantum sentence classification, whcih involves annotating sentences with topics and converting them into parameterized quantum circuits.
+Optional packages:
 
-Remember that we still have not employed any recursive structure in our experiments. Next we try to implement a QRNN for similar tasks.
+    pip install pytest                                   # for tests
+    pip install jupyter matplotlib opentsne umap-learn   # to run jupyter notebooks for MNIST data augmentation
 
-## QRNN Cell and Network
-The fundamental building block is an improved type of quantum neuron based to introduce non-linearity [[2]](#references). In addition, we employ a type of fixed-point amplitude amplification (done during training) which alows the introduction of measurements. These both operations remains arbitrarily close to unitary. This implementation is the first quantum machine learning model capable of working with non-superposed training data.
 
-There are three parts of the QRNN cell.
-- The input stage, where at each step, it writes the current input into the cell state
-- Multiple work stages, where it computes with input and cell states
-- Final output stage, which creates a probability density over possible predictions.
+## Folder Structure
 
-Although the resulting circuits are deeper than VQEs, it only requires as many qubits as the input and cell states are wide.
+    ./RVQE/             # implementation of QRNN as pytorch model
+    ./RVQE/datasets/    # datasets and necessary resources
 
-The figures below show the QRNN Cell, and how it can be used to construct a QRNN.
+    ./runs/
+    ./locks/
+    ./checkpoints/      # empty folders used for tensorboard logs, checkpoints, and for synchronizing experiments on multi-rank systems
 
-<!-- ![QRNN Cell](./assets/QRNN_Cell.png)
-$$\textit{QRNN Cell}$$
-![QRNN](https://github.com/andysama79/quantum-recurrent-neural-network/blob/master/assets/QRNN.png?raw=true)
-$$\textit{QRNN}$$ -->
+    ./notebooks/        # contains jupyter notebook for MNIST t-SNE augmentation,
+                        # model test set evaluations,
+                        # and RNN/LSTM reference implementation for DNA sequence test
+    ./results/          # results used in paper; contains mathematica notebooks for plots,
+                        # training data in csv format used to produce plots, and
+                        # pre-trained models that performed best
 
-<img src="./assets/QRNN_Cell.png" alt="QRNN Cell" title="QRNN Cell">
-<img src="./assets/QRNN.png" alt="QRNN" title="QRNN">
+    ./main.py           # main training program
 
-## Implementation
-1. Quantum Natural Language Processing:
-   - Define a training dataset
-   - Make sentence pairs labeled according to their topical relevance
-   - Construct hybrid model, trained to perform XOR operations
-   - Discern if the sentences share the same topic
-   - Upon training, the model demonstrates a clear capacity to differentiate between topics
-2. Quantum Natural Language Generation:
-   - Generate a random initial candidate sentence $C$
-   - Create the parameterized quantum circuit corresponding to $C$ using lambeq
-   - Run the circuit many times with optimal parameters, record the percentage of runs where the output bitstring corresponds to the correct topic is recorded
-   - While the value $P(C) < threshold$ perform:
-     - generate a neighboring sentence of $C$ called $C'$ by either inserting a new random word into $C$, deleting a random word from C or replacing a random word from $C$ with a new random word
-     - if $P(C') > P(C)$ set $C = C'$ 
-3. Quantum Recurrent Neural Network:
-   - Create a custom dataset to feed the data vector in a one-hot fashion step-by-step as a state
-   - Create custom layers for the QRNN Cell, which will further be employed in the QRNN
+    ./*.sh              # various experiment presets used in the paper
+                        # modify these to match your training environment
 
-## Future
-With regards to Quantum RNN:
-1. Design Compound Layers
-2. Design Gate Layers
-3. Creating the QRNN cell
-4. Run experiments for sequence memorization
-5. Run experiments for complex MNIST classification
 
-# References
-1. [Recurrent Quantum Neural Networks](./references/2006.14619.pdf), Bausch J.
-2. [Quantum Neuron: an elementary building block for machine learning on quantum computers](./references/1711.11240.pdf), Cao Y. et al.
 
-# A bit about the repo and its contents
-- assets: contains infographics, plots, visualizations
-- data: contains all the data used in training/testing
-- experiments: contains interactive notebooks to play around with models
-- references: contains research papers
-- src: contains the actual source code; there are three subfolders
-  - models: contains saved models from different runs, also model implementation files
-  - tests: contains some test files, may or may not be empty
-  - utils: contains some recurring code, mostly dealing with data loading
+## Running
+
+    ./main.py --help
+    ./main.py train --help
+    ./main.py resume --help
+
+    pytest              # executes a series of tests
+
+    ./main.py train     # executes a simple default training task (default parameters from --help)
+
+
+For instance, to train the umap augmented MNIST dataset on an 8-core machine, execute the following:
+
+    OMP_NUM_THREADS=2 ./main.py \
+        --tag experiment-test \
+        --seed 42 \
+        --port 20023 \
+        --num-shards 4 \
+        --epochs 10000 \
+        train \
+        --dataset mnist-umap-d2-r4 \
+        --workspace 6 \
+        --stages 2 \
+        --order 2 \
+        --degree 3 \
+        --optimizer adam \
+        --learning-rate 0.005 \
+        --batch-size 16
+
+Note that memory requirements go linear in the number of shards (ranks); linear in the number of stages; and grow exponentially in the workspace size. There is more parameters that control training, stopping, etc..
+
+When training is interrupted, a checkpoint can simply be restarted with
+
+    ./main.py resume checkpoint-name.tar.gz
+
+A few of the parameters can be overridden, e.g. a new learning rate can be set.
+
+
+## Datasets
+
+No external datasets are necessary; the implemented ones can be elected with the `--dataset` switch, and all required files are precomputed. Some datasets for memorizing sequences require a certain batch size or number of shards or combinations thereof; the program will complain if this is manually set to something invalid (e.g., `--dataset simple-seq` makes the QRNN learn precisely two sequences, so the setup is such that either `--num-shards 2 ... --batch-size 1` or `--num-shards 1 ... --batch-size 2` is allowed). Most datasets do not have such a restriction.
+
+For MNIST, the batch size indicates how many samples _of each digit_ are presented.
+
+MNIST data augmentation with t-SNE was too slow in mathematica alone; hence it is broken up into two steps, data preparation using the `./notebooks/mnist.nb` MM file, and `./notebooks/mnist-tsne.ipynb` file which performs the heavy lifting. The created data can then be re-imported in MM, and exported for use in training. All of these files are included for transparency, and do not have to be executed before using the code.
+
+
+## Experiments
+
+The root folder contains more experiments than were run for the paper. Many of them perform grid search over parameter ranges, or seeds, to get statistics on learning performance. They are often set up to match a certain cluster, so modify to suit your needs before execution. Training data produced with them was used directly in producing the datasets under `./results/`, and the best MNIST models are collected in `./results/best/`, to be evaluated on their respective test sets in the `./notebooks/` folder.
+The root folder contains more experiments than were run for the paper. Many of them perform grid search over parameter ranges, or seeds, to get statistics on learning performance. They are often set up to match a certain cluster, so modify to suit your needs before execution. Training data produced with them was used directly in producing the datasets under `./results/`, and the best MNIST models are collected in `./results/best/`, to be evaluated on their respective test sets in the `./notebooks/` folder.
